@@ -1,12 +1,18 @@
-import requests
 import os
+import requests
+import urllib.parse
 from pymongo import MongoClient
 
-# ✅ Kết nối MongoDB
-MONGO_URI = os.getenv("MONGO_URI")
+# ✅ Mã hóa username & password cho MongoDB URI
+username = urllib.parse.quote_plus("phuc201005")
+password = urllib.parse.quote_plus("hj9gg4lWz5Hp7w83")
+
+# ✅ Kết nối MongoDB (Fix lỗi "Username and password must be escaped")
+MONGO_URI = f"mongodb+srv://{username}:{password}@cluster0.ujsoo.mongodb.net/?retryWrites=true&w=majority"
+
 try:
     client = MongoClient(MONGO_URI)
-    db = client["DACN2"]
+    db = client["DACN2"]  # ✅ Đổi tên DB nếu cần
     print("✅ Kết nối MongoDB thành công!")
 
     # ✅ Kiểm tra & tạo collection nếu chưa có
@@ -17,8 +23,8 @@ try:
 except Exception as e:
     print(f"❌ Lỗi kết nối MongoDB: {e}")
 
-# ✅ Cấu hình API của ImgBB
-IMGBB_API_KEY = os.getenv("IMGBB_API_KEY")
+# ✅ API Key của ImgBB (Lưu ảnh)
+IMGBB_API_KEY = "13e5fc0624e61eb94fc4e9ab0d6b8c4e"
 
 def upload_to_imgbb(file_path):
     """Tải file lên ImgBB và trả về URL công khai"""
@@ -27,17 +33,15 @@ def upload_to_imgbb(file_path):
             f"https://api.imgbb.com/1/upload?key={IMGBB_API_KEY}",
             files={"image": file}
         )
-
-    # ✅ Kiểm tra kết quả upload
     if response.status_code == 200:
         return response.json()["data"]["url"]
     else:
         print(f"❌ Lỗi upload ImgBB: {response.json()}")
         return None
 
-# ✅ Cấu hình API của Streamable
-STREAMABLE_USERNAME = os.getenv("STREAMABLE_USERNAME")
-STREAMABLE_PASSWORD = os.getenv("STREAMABLE_PASSWORD")
+# ✅ API của Streamable (Lưu video)
+STREAMABLE_USERNAME = "phuc201005@gmail.com"
+STREAMABLE_PASSWORD = "dphc052010"
 
 def upload_to_streamable(file_path):
     """Upload video lên Streamable và trả về URL"""
@@ -47,8 +51,6 @@ def upload_to_streamable(file_path):
             auth=(STREAMABLE_USERNAME, STREAMABLE_PASSWORD),
             files={"file": video_file}
         )
-
-    # ✅ Kiểm tra kết quả upload
     if response.status_code == 200:
         return f"https://streamable.com/{response.json().get('shortcode', '')}"
     else:
