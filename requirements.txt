@@ -8,5 +8,5 @@ kaggle
 opencv-python
 numpy
 aiofiles
-urllib
+
 
