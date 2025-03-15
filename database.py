@@ -2,8 +2,12 @@ import requests
 import os
 from pymongo import MongoClient
 
-# ✅ Kết nối MongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
+# ✅ Mã hóa username & password theo RFC 3986
+username = urllib.parse.quote_plus("phuc201005")
+password = urllib.parse.quote_plus("hj9gg4lWz5Hp7w83")
+
+# ✅ MongoDB URI chuẩn
+MONGO_URI = f"mongodb+srv://{username}:{password}@cluster0.ujsoo.mongodb.net/?retryWrites=true&w=majority"
 try:
     client = MongoClient(MONGO_URI)
     db = client["DACN2"]
