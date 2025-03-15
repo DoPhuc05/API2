@@ -5,7 +5,7 @@ import aiofiles
 from fastapi import FastAPI, UploadFile, File
 import uvicorn
 from ultralytics import YOLO
-from dtbase import db, upload_to_imgbb, upload_to_streamable
+from database import db, upload_to_imgbb, upload_to_streamable  # 🔥 Sửa import
 from collections import deque  # 🔥 Lưu lịch sử số lượng swimmer
 
 # ✅ Khởi tạo FastAPI
@@ -39,7 +39,7 @@ async def predict_image(file: UploadFile = File(...)):
         for i in range(len(result.boxes)):
             x1, y1, x2, y2 = map(int, result.boxes.xyxy[i].tolist())
             score = round(result.boxes.conf[i].item(), 2)
-            label = model.names[int(result.boxes.cls.item())]
+            label = model.names[int(result.boxes.cls[i].item())]  # 🔥 Sửa lỗi cls
 
             if label == "swimmer":
                 person_count += 1
@@ -89,7 +89,7 @@ async def predict_video(file: UploadFile = File(...)):
 
     frame_count = 0
     total_swimmer_count = 0
-    prev_counts = deque(maxlen=3)
+    prev_counts = deque(maxlen=3)  # 🔥 Lưu lịch sử 3 frame gần nhất
 
     while True:
         ret, frame = cap.read()
@@ -103,12 +103,16 @@ async def predict_video(file: UploadFile = File(...)):
             if results and len(results) > 0:
                 frame = results[0].plot()
                 current_swimmer_count = sum(
-                    1 for box in results[0].boxes if model.names[int(box.cls.item())] == "swimmer"
+                    1 for box in results[0].boxes if model.names[int(box.cls[i].item())] == "swimmer"
                 )
 
-                prev_counts.append(current_swimmer_count)
-                if len(set(prev_counts)) > 1:
-                    total_swimmer_count = current_swimmer_count
+                prev_counts.append(current_swimmer_count)  # Lưu số swimmer của frame hiện tại
+
+                # 🔥 Cập nhật số swimmer nếu có thay đổi trong 3 frame liên tiếp
+                if len(prev_counts) == 3:
+                    avg_swimmer_count = round(sum(prev_counts) / 3)
+                    if avg_swimmer_count != total_swimmer_count:
+                        total_swimmer_count = avg_swimmer_count  # Cập nhật số swimmer
 
         out.write(frame)
 
@@ -128,4 +132,4 @@ async def predict_video(file: UploadFile = File(...)):
 
 # ✅ Chạy FastAPI
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=10000)  # 🔥 Đổi port 10000
