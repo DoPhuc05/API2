@@ -8,8 +8,6 @@ from ultralytics import YOLO
 from database import db, upload_to_imgbb, upload_to_streamable  # 🔥 Sửa import
 from collections import deque  # 🔥 Lưu lịch sử số lượng swimmer
 import gdown
-# ✅ Khởi tạo FastAPI
-app = FastAPI()
 
 # ✅ Load mô hình YOLOv8
 MODEL_DIR = "models"
@@ -27,6 +25,9 @@ if not os.path.exists(MODEL_PATH):
     print("✅ Mô hình đã tải xong!")
 else:
     print("✅ Mô hình đã tồn tại!")
+
+# ✅ Khởi tạo FastAPI
+app = FastAPI()
 
 # ✅ XỬ LÝ ẢNH & LƯU VÀO MONGODB + IMGBB
 @app.post("/predict-image/")
