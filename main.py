@@ -14,7 +14,6 @@ MODEL_DIR = "models"
 os.makedirs(MODEL_DIR, exist_ok=True)
 MODEL_PATH = os.path.join(MODEL_DIR, "best (3).pt")
 
-# 🔹 Thay FILE_ID bằng ID file trên Google Drive
 GDRIVE_FILE_ID = "1Ay0CueS1oS4AxD_u8igoUtj_Z4fwfqT6"
 GDRIVE_URL = f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}"
 
@@ -23,8 +22,15 @@ if not os.path.exists(MODEL_PATH):
     print("🔄 Đang tải mô hình YOLO từ Google Drive...")
     gdown.download(GDRIVE_URL, MODEL_PATH, quiet=False)
     print("✅ Mô hình đã tải xong!")
-else:
-    print("✅ Mô hình đã tồn tại!")
+
+# ✅ Khởi tạo model
+print(f"🔄 Đang tải mô hình YOLOv8 từ {MODEL_PATH}...")
+try:
+    model = YOLO(MODEL_PATH)
+    print("✅ Mô hình YOLOv8 đã sẵn sàng!")
+except Exception as e:
+    print(f"❌ Lỗi khi load mô hình: {e}")
+    model = None
 
 # ✅ Khởi tạo FastAPI
 app = FastAPI()
