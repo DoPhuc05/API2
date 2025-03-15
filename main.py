@@ -5,7 +5,7 @@ import aiofiles
 from fastapi import FastAPI, UploadFile, File
 import uvicorn
 from ultralytics import YOLO
-from database import db, upload_to_imgbb, upload_to_streamable
+from dtbase import db, upload_to_imgbb, upload_to_streamable
 from collections import deque  # 🔥 Lưu lịch sử số lượng swimmer
 
 # ✅ Khởi tạo FastAPI
