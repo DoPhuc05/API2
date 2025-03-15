@@ -7,7 +7,7 @@ import uvicorn
 from ultralytics import YOLO
 from database import db, upload_to_imgbb, upload_to_streamable  # 🔥 Sửa import
 from collections import deque  # 🔥 Lưu lịch sử số lượng swimmer
-
+import gdown
 # ✅ Khởi tạo FastAPI
 app = FastAPI()
 
@@ -16,12 +16,17 @@ MODEL_DIR = "models"
 os.makedirs(MODEL_DIR, exist_ok=True)
 MODEL_PATH = os.path.join(MODEL_DIR, "best (3).pt")
 
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"❌ Không tìm thấy file {MODEL_PATH}")
+# 🔹 Thay FILE_ID bằng ID file trên Google Drive
+GDRIVE_FILE_ID = "1Ay0CueS1oS4AxD_u8igoUtj_Z4fwfqT6"
+GDRIVE_URL = f"https://drive.google.com/uc?id={GDRIVE_FILE_ID}"
 
-print(f"🔄 Đang tải mô hình YOLOv8 từ {MODEL_PATH}...")
-model = YOLO(MODEL_PATH)
-print("✅ Mô hình YOLOv8 đã sẵn sàng!")
+# ✅ Tải file nếu chưa có
+if not os.path.exists(MODEL_PATH):
+    print("🔄 Đang tải mô hình YOLO từ Google Drive...")
+    gdown.download(GDRIVE_URL, MODEL_PATH, quiet=False)
+    print("✅ Mô hình đã tải xong!")
+else:
+    print("✅ Mô hình đã tồn tại!")
 
 # ✅ XỬ LÝ ẢNH & LƯU VÀO MONGODB + IMGBB
 @app.post("/predict-image/")
