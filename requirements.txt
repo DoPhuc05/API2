@@ -1,12 +1,9 @@
 fastapi
 uvicorn
-pymongo
-python-dotenv
-ultralytics
-requests
-kaggle
+aiofiles
+python-multipart
 opencv-python
 numpy
-aiofiles
-gdown
-python-multipart
+pymongo
+
+ultralytics
